@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct EditMedicineView: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: EditMedicineViewModel
     @State private var isShowingScanner = false

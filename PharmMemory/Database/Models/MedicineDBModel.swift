@@ -44,3 +44,15 @@ extension MedicineDBModel {
             expiryDate: medicine.expiryDate)
     }
 }
+
+extension Medicine {
+    init(from dbModel: MedicineDBModel) {
+        self.init(
+            id: dbModel.id,
+            title: dbModel.title,
+            dose: dbModel.dose,
+            count: dbModel.count,
+            notes: dbModel.notes ?? String.empty,
+            expiryDate: dbModel.expiryDate)
+    }
+}

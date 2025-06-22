@@ -13,8 +13,10 @@ struct MedicinesView: View {
     
     var body: some View {
         NavigationStack {
-            List($viewModel.filteredMedicines) { element in
-                Text("Medicines")
+            List(viewModel.filteredMedicines) { element in
+                MedicineCardView(medicine: element)
+                    .listRowBackground(Color.cardBackground)
+                    .listRowSeparatorTint(Color.separator)
             }
             .navigationBarTitle("Моя аптечка")
             .toolbar {
@@ -33,8 +35,7 @@ private extension MedicinesView {
         NavigationLink {
             EditMedicineView(viewModel: EditMedicineViewModel(
                 medicine: Medicine.empty,
-                sceneType: .add,
-                modelContext: modelContext))
+                sceneType: .add))
         } label: {
             Image(systemName: "plus")
                 .resizable()
@@ -42,8 +43,4 @@ private extension MedicinesView {
                 .padding()
         }
     }
-}
-
-#Preview {
-    MedicinesView()
 }

@@ -15,12 +15,12 @@ struct MainTabBarView: View {
                     Image(systemName: "cross.case")
                     Text("Моя аптечка")
                 }
-            Text("Список")
+            CheckListView()
                 .tabItem {
                     Image(systemName: "list.bullet")
                     Text("Список покупок")
                 }
-            Text("Настройки")
+            SettingsView()
                 .tabItem {
                     Image(systemName: "gearshape")
                     Text("Настройки")

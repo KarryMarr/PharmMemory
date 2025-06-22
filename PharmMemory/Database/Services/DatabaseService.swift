@@ -6,7 +6,12 @@
 //
 import SwiftData
 
-final class DatabaseService {
+protocol DatabaseServiceProtocol {
+    func saveMedicine(_ medicine: Medicine)
+    func fetchAllMedicines() -> [Medicine]
+}
+
+final class DatabaseService: DatabaseServiceProtocol {
     private let modelContext: ModelContext
     
     init(modelContext: ModelContext) {
@@ -20,6 +25,17 @@ final class DatabaseService {
             try modelContext.save()
         } catch {
             print("Saving to the database failed: \(error)")
+        }
+    }
+    
+    func fetchAllMedicines() -> [Medicine] {
+        let fetchDescriptor = FetchDescriptor<MedicineDBModel>()
+        do {
+            let dbModels = try modelContext.fetch(fetchDescriptor)
+            return dbModels.map { Medicine(from: $0) }
+        } catch {
+            print("Failed to fetch medicines: \(error)")
+            return []
         }
     }
 }

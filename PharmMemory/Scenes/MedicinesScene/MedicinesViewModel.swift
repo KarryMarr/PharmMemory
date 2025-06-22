@@ -7,6 +7,8 @@
 import SwiftUI
 
 final class MedicinesViewModel: ObservableObject {
+    private let databaseService = ServiceLocator.shared.resolve(DatabaseServiceProtocol.self)
+    
     private var allMedicines: [Medicine] = []
     @Published var filteredMedicines: [Medicine] = []
     @Published var searchText: String = "" {
@@ -22,7 +24,9 @@ final class MedicinesViewModel: ObservableObject {
     }
     
     func fetchMedicines() {
-        
+        let medicines = databaseService?.fetchAllMedicines() ?? []
+        allMedicines = medicines
+        filteredMedicines = medicines
     }
     
 }

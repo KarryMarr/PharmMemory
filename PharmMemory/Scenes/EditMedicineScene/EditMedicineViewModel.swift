@@ -8,11 +8,10 @@ import SwiftUI
 import SwiftData
 
 final class EditMedicineViewModel: ObservableObject {
+    private let databaseService = ServiceLocator.shared.resolve(DatabaseServiceProtocol.self)
+    
     @Published var medicine: Medicine
     @Published var sceneType: EditMedicineModel.SceneType
-    
-    private let modelContext: ModelContext
-    private let databaseService: DatabaseService
     
     var isValid: Bool {
         !medicine.title.isEmpty && !medicine.dose.isEmpty && !medicine.count.isEmpty
@@ -20,21 +19,13 @@ final class EditMedicineViewModel: ObservableObject {
     
     init(
         medicine: Medicine,
-        sceneType: EditMedicineModel.SceneType,
-        modelContext: ModelContext
+        sceneType: EditMedicineModel.SceneType
     ) {
         self.medicine = medicine
         self.sceneType = sceneType
-        self.modelContext = modelContext
-        self.databaseService = DatabaseService(modelContext: modelContext)
-        setup()
-    }
-    
-    private func setup() {
-        
     }
     
     func saveButtonTapped() {
-        databaseService.saveMedicine(medicine)
+        databaseService?.saveMedicine(medicine)
     }
 }
