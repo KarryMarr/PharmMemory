@@ -38,7 +38,7 @@ struct EditMedicineView: View {
                 }
             }
             .sheet(isPresented: $isShowingScanner) {
-                CameraView(scannedCode: $scannedBarcode)
+                BarcodeScannerView(scannedCode: $scannedBarcode)
             }
         }
     }
