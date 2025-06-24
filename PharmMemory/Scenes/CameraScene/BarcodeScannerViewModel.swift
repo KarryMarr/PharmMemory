@@ -4,112 +4,123 @@
 //
 //  Created by Karina Blinova on 24.06.2025.
 //
-
 import AVFoundation
+import Vision
 import Combine
 
 final class BarcodeScannerViewModel: NSObject, ObservableObject {
-    enum ScannerState {
-        case idle
-        case scanning
-        case scanned(String)
-        case error(Error)
-    }
+    @Published var scannedCode: String = ""
     
-    @Published var state: ScannerState = .idle
-    @Published var medicine: Medicine?
-    @Published var isLoading = false
-    @Published var errorMessage: String?
+    let captureSession = AVCaptureSession()
+    private var isSessionRunning = false
     
-    var captureSession: AVCaptureSession?
-    private let sessionQueue = DispatchQueue(label: "scanner.session.queue")
-    
-    // MARK: - Public Methods
-    
-    func startScanning() {
-        state = .scanning
-        setupCaptureSession()
-    }
-    
-    func stopScanning() {
-        sessionQueue.async { [weak self] in
-            self?.captureSession?.stopRunning()
+    @MainActor func startScanning() async {
+        guard !isSessionRunning else { return }
+        
+        do {
+            try await setupCaptureSession()
+            try await withCheckedThrowingContinuation { continuation in
+                self.captureSession.startRunning()
+                self.isSessionRunning = true
+                continuation.resume()
+            }
+            objectWillChange.send()
+        } catch {
+            print("Ошибка")
         }
     }
     
-    func resetScanner() {
-        state = .idle
-        medicine = nil
-        errorMessage = nil
-    }
-    
-    func fetchMedicineArticle(for barcode: String) {
-        isLoading = true
-        errorMessage = nil
+    func stopScanning() async {
+        guard isSessionRunning else { return }
         
-        // TODO: добавить сетевой запрос
+        await withCheckedContinuation { continuation in
+            self.captureSession.stopRunning()
+            self.isSessionRunning = false
+            continuation.resume()
+        }
     }
     
     // MARK: - Private Methods
-    
-    private func setupCaptureSession() {
-        sessionQueue.async { [weak self] in
-            guard let self = self else { return }
-            
-            self.captureSession = AVCaptureSession()
-            
-            guard let videoCaptureDevice = AVCaptureDevice.default(for: .video),
-                  let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice),
-                  self.captureSession?.canAddInput(videoInput) == true else {
-                self.handleError("Не удалось настроить камеру для сканирования")
+    private func setupCaptureSession() async throws {
+        guard let videoCaptureDevice = AVCaptureDevice.default(for: .video),
+              let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice) else {
+            throw ScannerError.cameraSetupFailed
+        }
+        
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            guard captureSession.canAddInput(videoInput) else {
+                continuation.resume(throwing: ScannerError.cameraSetupFailed)
                 return
             }
             
-            self.captureSession?.addInput(videoInput)
+            captureSession.addInput(videoInput)
             
-            let metadataOutput = AVCaptureMetadataOutput()
+            let videoOutput = AVCaptureVideoDataOutput()
+            videoOutput.setSampleBufferDelegate(self, queue: .main)
             
-            if self.captureSession?.canAddOutput(metadataOutput) == true {
-                self.captureSession?.addOutput(metadataOutput)
-                metadataOutput.setMetadataObjectsDelegate(self, queue: .main)
-                metadataOutput.metadataObjectTypes = [.ean8, .ean13, .pdf417]
-            } else {
-                self.handleError("Сканирование штрих-кодов не поддерживается")
+            guard captureSession.canAddOutput(videoOutput) else {
+                continuation.resume(throwing: ScannerError.outputSetupFailed)
                 return
             }
             
-            self.captureSession?.startRunning()
+            captureSession.addOutput(videoOutput)
+            continuation.resume()
         }
     }
     
-    private func handleError(_ message: String) {
-        DispatchQueue.main.async {
-            let error = NSError(
-                domain: "ScannerError",
-                code: 400,
-                userInfo: [NSLocalizedDescriptionKey: message]
-            )
-            self.state = .error(error)
-            self.errorMessage = message
+    @MainActor
+    private func handleScannedCode(_ code: String) {
+        scannedCode = code
+        AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+    }
+}
+
+// MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
+extension BarcodeScannerViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
+    nonisolated func captureOutput(
+        _ output: AVCaptureOutput,
+        didOutput sampleBuffer: CMSampleBuffer,
+        from connection: AVCaptureConnection
+    ) {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        detectBarcode(in: pixelBuffer)
+    }
+    
+    private nonisolated func detectBarcode(in pixelBuffer: CVPixelBuffer) {
+        let request = VNDetectBarcodesRequest { [weak self] request, _ in
+            guard let results = request.results as? [VNBarcodeObservation],
+                  let barcode = results.first,
+                  let payload = barcode.payloadStringValue else { return }
+            
+            Task {
+                await self?.handleScannedCode(payload)
+                await self?.stopScanning()
+            }
+        }
+        
+        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up)
+        
+        do {
+            try handler.perform([request])
+        } catch {
+            print("Error: \(error)")
         }
     }
 }
 
-// MARK: - AVCaptureMetadataOutputObjectsDelegate
-extension BarcodeScannerViewModel: AVCaptureMetadataOutputObjectsDelegate {
-    func metadataOutput(_ output: AVCaptureMetadataOutput,
-                       didOutput metadataObjects: [AVMetadataObject],
-                       from connection: AVCaptureConnection) {
-        stopScanning()
+// MARK: - Scanner Errors
+extension BarcodeScannerViewModel {
+    enum ScannerError: Error {
+        case cameraSetupFailed
+        case outputSetupFailed
         
-        guard let metadataObject = metadataObjects.first,
-              let readableObject = metadataObject as? AVMetadataMachineReadableCodeObject,
-              let barcode = readableObject.stringValue else {
-            handleError("Не удалось распознать штрих-код")
-            return
+        var localizedDescription: String {
+            switch self {
+            case .cameraSetupFailed:
+                return "Не удалось настроить камеру"
+            case .outputSetupFailed:
+                return "Не удалось настроить вывод видео"
+            }
         }
-        
-        AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
-        fetchMedicineArticle(for: barcode)
     }
 }

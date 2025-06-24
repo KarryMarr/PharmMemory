@@ -9,40 +9,43 @@ import SwiftUI
 struct BarcodeScannerView: View {
     @Binding var scannedCode: String
     @StateObject var viewModel = BarcodeScannerViewModel()
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         ZStack {
-            ScannerView(scannedCode: $scannedCode)
+            ScannerViewRepresentable(viewModel: viewModel)
                 .edgesIgnoringSafeArea(.all)
-            
-            Text(scannedCode)
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .padding()
-            
-            if viewModel.isLoading {
-                ProgressView()
-                    .scaleEffect(2)
-                    .padding()
-                    .background(Color(.systemBackground).opacity(0.8))
-                    .cornerRadius(10)
+            VStack {
+                scannerHeader
+                Spacer()
             }
         }
-        .alert("Ошибка", isPresented: .constant(viewModel.errorMessage != nil)) {
-            Button("OK", role: .cancel) {
-                viewModel.errorMessage = nil
-                viewModel.resetScanner()
-            }
-        } message: {
-            Text(viewModel.errorMessage ?? "Неизвестная ошибка")
+        .task {
+            await viewModel.startScanning()
         }
-//        .onAppear {
-//            viewModel.startScanning()
-//        }
-//        .onDisappear {
-//            viewModel.stopScanning()
-//        }
+        .onDisappear {
+            Task { await viewModel.stopScanning() }
+        }
+        .onChange(of: viewModel.scannedCode) {
+            scannedCode = viewModel.scannedCode
+            if !scannedCode.isEmpty {
+                dismiss()
+            }
+        }
+    }
+    
+    private var scannerHeader: some View {
+        HStack {
+            Spacer()
+            
+            Text("Наведите камеру на штрих-код")
+                .foregroundColor(.white)
+                .padding()
+                .background(Color.black.opacity(0.5))
+                .cornerRadius(8)
+            
+            Spacer()
+        }
+        .padding(.top, 20)
     }
 }
