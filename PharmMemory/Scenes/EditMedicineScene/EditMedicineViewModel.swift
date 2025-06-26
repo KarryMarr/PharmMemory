@@ -9,6 +9,7 @@ import SwiftData
 
 final class EditMedicineViewModel: ObservableObject {
     private let databaseService = ServiceLocator.shared.resolve(DatabaseServiceProtocol.self)
+    private let notificationCenterService = ServiceLocator.shared.resolve(NotificationCenterServiceProtocol.self)
     
     @Published var medicine: Medicine
     @Published var sceneType: EditMedicineModel.SceneType
@@ -18,14 +19,23 @@ final class EditMedicineViewModel: ObservableObject {
     }
     
     init(
-        medicine: Medicine,
-        sceneType: EditMedicineModel.SceneType
+        sceneType: EditMedicineModel.SceneType,
+        medicine: Medicine?
     ) {
-        self.medicine = medicine
         self.sceneType = sceneType
+        self.medicine = medicine ?? Medicine(
+            id: UUID(),
+            title: String.empty,
+            dose: String.empty,
+            count: String.empty,
+            notes: String.empty,
+            expiryDate: Date())
     }
     
     func saveButtonTapped() {
         databaseService?.saveMedicine(medicine)
+        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.notificationsEnabled.rawValue) {
+            notificationCenterService?.scheduleExpiryNotifications(for: medicine)
+        }
     }
 }

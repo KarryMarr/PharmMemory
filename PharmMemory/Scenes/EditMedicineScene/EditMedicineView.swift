@@ -4,7 +4,6 @@
 //
 //  Created by Karina Blinova on 18.06.2025.
 //
-
 import SwiftUI
 
 struct EditMedicineView: View {
@@ -68,6 +67,7 @@ extension EditMedicineView {
             )
             .font(.bodyText)
             .foregroundColor(.textPrimary)
+            .environment(\.locale, Locale(identifier: "ru_RU"))
         }
         .listRowBackground(Color.cardBackground)
     }

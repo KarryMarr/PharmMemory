@@ -8,15 +8,13 @@ import Foundation
 import SwiftUI
 
 struct Medicine: Identifiable {
-    let id: Int
+    let id: UUID
     var title: String
     var dose: String
     var count: String
     var notes: String
     var expiryDate: Date
-    
-    static let empty = Medicine(id: 0, title: "", dose: "", count: "", notes: "", expiryDate: Date())
-    
+        
     var expiresSoon: Bool {
         Calendar.current.dateComponents([.day], from: Date(), to: expiryDate).day ?? 0 <= 30
     }

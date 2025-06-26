@@ -7,8 +7,8 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @AppStorage("notificationsEnabled") private var notificationsEnabled = true
-    @AppStorage("expiryReminderDays") private var expiryReminderDays = 7
+    @AppStorage(UserDefaultsKeys.notificationsEnabled.rawValue) private var notificationsEnabled = true
+    @AppStorage(UserDefaultsKeys.expiryReminderDays.rawValue) private var expiryReminderDays = 7
     
     var body: some View {
         NavigationStack {

@@ -9,7 +9,7 @@ import SwiftData
 
 @Model
 final class MedicineDBModel {
-    var id: Int
+    @Attribute(.unique) var id: UUID
     var title: String
     var dose: String
     var count: String
@@ -17,7 +17,7 @@ final class MedicineDBModel {
     var expiryDate: Date
     
     init(
-        id: Int,
+        id: UUID,
         title: String,
         dose: String,
         count: String,

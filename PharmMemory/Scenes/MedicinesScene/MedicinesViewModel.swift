@@ -29,4 +29,10 @@ final class MedicinesViewModel: ObservableObject {
         filteredMedicines = medicines
     }
     
+    func deleteMedicine(_ medicine: Medicine) {
+        databaseService?.deleteMedicine(byId: medicine.id)
+        allMedicines.removeAll { $0.id == medicine.id }
+        filteredMedicines.removeAll { $0.id == medicine.id }
+    }
+    
 }

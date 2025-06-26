@@ -10,7 +10,7 @@ final class ServiceConstructor {
     private let container = ServiceLocator.shared
     
     func loadAllServices() {
-        // TODO: добавить сюда регистрацию всех сервисов
+        container.register(NotificationCenterService(), for: NotificationCenterServiceProtocol.self)
     }
     
     func loadDatabaseService(with modelContext: ModelContext) {
