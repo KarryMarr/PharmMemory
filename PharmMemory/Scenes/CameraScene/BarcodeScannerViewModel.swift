@@ -9,7 +9,7 @@ import Vision
 import Combine
 
 final class BarcodeScannerViewModel: NSObject, ObservableObject {
-    @Published var scannedCode: String = ""
+    @Published var scannedCode: String?
     
     let captureSession = AVCaptureSession()
     private var isSessionRunning = false

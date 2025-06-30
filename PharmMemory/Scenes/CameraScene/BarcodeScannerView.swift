@@ -6,8 +6,17 @@
 //
 import SwiftUI
 
+private extension Double {
+    static let scannerHeaderBackgroundOpacity = 0.5
+}
+
+private extension CGFloat {
+    static let scannerHeaderCornerRadius: CGFloat = 8
+    static let scannerHeaderTopPadding: CGFloat = 20
+}
+
 struct BarcodeScannerView: View {
-    @Binding var scannedCode: String
+    @Binding var scannedCode: String?
     @StateObject var viewModel = BarcodeScannerViewModel()
     @Environment(\.dismiss) var dismiss
     
@@ -27,8 +36,8 @@ struct BarcodeScannerView: View {
             Task { await viewModel.stopScanning() }
         }
         .onChange(of: viewModel.scannedCode) {
-            scannedCode = viewModel.scannedCode
-            if !scannedCode.isEmpty {
+            scannedCode = viewModel.scannedCode ?? String.empty
+            if scannedCode?.isEmpty == false {
                 dismiss()
             }
         }
@@ -39,13 +48,13 @@ struct BarcodeScannerView: View {
             Spacer()
             
             Text("Наведите камеру на штрих-код")
-                .foregroundColor(.white)
+                .foregroundColor(Color.white)
                 .padding()
-                .background(Color.black.opacity(0.5))
-                .cornerRadius(8)
+                .background(Color.black.opacity(Double.scannerHeaderBackgroundOpacity))
+                .cornerRadius(CGFloat.scannerHeaderCornerRadius)
             
             Spacer()
         }
-        .padding(.top, 20)
+        .padding(.top, CGFloat.scannerHeaderTopPadding)
     }
 }

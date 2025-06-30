@@ -7,8 +7,11 @@
 import SwiftUI
 
 final class CheckListViewModel: ObservableObject {
+    private let databaseService = ServiceLocator.shared.resolve(DatabaseServiceProtocol.self)
+    
     @Published var lowStockMedicines: [Medicine] = []
     
+    var model = CheckListModel(state: .empty)
     private var medicines: [Medicine] = [] {
         didSet {
             lowStockMedicines = medicines.filter { medicine in
@@ -18,9 +21,8 @@ final class CheckListViewModel: ObservableObject {
         }
     }
     
-    private let databaseService = ServiceLocator.shared.resolve(DatabaseServiceProtocol.self)
-    
     func onAppear() {
         medicines = databaseService?.fetchAllMedicines() ?? []
+        model.state = lowStockMedicines.isEmpty ? .empty : .content
     }
 }

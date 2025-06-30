@@ -13,10 +13,8 @@ final class EditMedicineViewModel: ObservableObject {
     
     @Published var medicine: Medicine
     @Published var sceneType: EditMedicineModel.SceneType
-    
-    var isValid: Bool {
-        !medicine.title.isEmpty && !medicine.dose.isEmpty && !medicine.count.isEmpty
-    }
+    @Published var isShowingScanner = false
+    @Published var isShowAlert: Bool = false
     
     init(
         sceneType: EditMedicineModel.SceneType,
@@ -33,9 +31,17 @@ final class EditMedicineViewModel: ObservableObject {
     }
     
     func saveButtonTapped() {
+        guard medicine.isValid else {
+            isShowAlert = true
+            return
+        }
         databaseService?.saveMedicine(medicine)
         if UserDefaults.standard.bool(forKey: UserDefaultsKeys.notificationsEnabled.rawValue) {
             notificationCenterService?.scheduleExpiryNotifications(for: medicine)
         }
+    }
+    
+    func copyBarcodeTapped() {
+        UIPasteboard.general.string = medicine.barcode
     }
 }

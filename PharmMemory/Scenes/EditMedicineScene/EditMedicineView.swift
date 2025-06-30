@@ -9,8 +9,6 @@ import SwiftUI
 struct EditMedicineView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: EditMedicineViewModel
-    @State private var isShowingScanner = false
-    @State private var scannedBarcode = ""
     
     var body: some View {
         NavigationStack {
@@ -20,44 +18,47 @@ struct EditMedicineView: View {
                 additionalSection
             }
             .background(Color.background)
-            .navigationTitle("Добавить лекарство")
+            .navigationTitle(viewModel.sceneType.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
                         viewModel.saveButtonTapped()
-                        dismiss()
+                        if viewModel.medicine.isValid {
+                            dismiss()
+                        }
                     } label: {
                         Text("Сохранить")
-                            .foregroundStyle(Color.blue)
+                            .foregroundStyle(viewModel.medicine.isValid ? Color.blue : Color.gray)
                     }
-                    .font(.bodyBold)
-                    .foregroundColor(.primary)
+                    .alert("Заполните обязательные поля", isPresented: $viewModel.isShowAlert) { }
+                    .font(Font.bodyBold)
+                    .foregroundColor(Color.primary)
                 }
             }
-            .sheet(isPresented: $isShowingScanner) {
-                BarcodeScannerView(scannedCode: $scannedBarcode)
+            .sheet(isPresented: $viewModel.isShowingScanner) {
+                BarcodeScannerView(scannedCode: $viewModel.medicine.barcode)
             }
         }
     }
 }
 
-extension EditMedicineView {
+private extension EditMedicineView {
     var mainSection: some View {
         Section {
             TextField("Название лекарства", text: $viewModel.medicine.title)
-                .font(.bodyText)
-                .foregroundColor(.textPrimary)
+                .font(Font.bodyText)
+                .foregroundColor(Color.textPrimary)
             
             TextField("Дозировка (мг, мл и т.д.)", text: $viewModel.medicine.dose)
-                .font(.bodyText)
-                .foregroundColor(.textPrimary)
+                .font(Font.bodyText)
+                .foregroundColor(Color.textPrimary)
                 .keyboardType(.numbersAndPunctuation)
             
             TextField("Количество в упаковке", text: $viewModel.medicine.count)
-                .font(.bodyText)
-                .foregroundColor(.textPrimary)
+                .font(Font.bodyText)
+                .foregroundColor(Color.textPrimary)
                 .keyboardType(.numberPad)
             
             DatePicker(
@@ -65,8 +66,8 @@ extension EditMedicineView {
                 selection: $viewModel.medicine.expiryDate,
                 displayedComponents: .date
             )
-            .font(.bodyText)
-            .foregroundColor(.textPrimary)
+            .font(Font.bodyText)
+            .foregroundColor(Color.textPrimary)
             .environment(\.locale, Locale(identifier: "ru_RU"))
         }
         .listRowBackground(Color.cardBackground)
@@ -74,25 +75,33 @@ extension EditMedicineView {
     
     var barcodeSection: some View {
         Section {
-            Button(action: {
-                isShowingScanner = true
-            }) {
-                HStack {
-                    Image(systemName: "barcode.viewfinder")
-                    Text("Сканировать штрих-код")
-                        .font(.bodyText)
-                }
-                .foregroundColor(.blue)
-            }
-            
-            if !scannedBarcode.isEmpty {
+            if let barcode = viewModel.medicine.barcode {
                 HStack {
                     Text("Штрих-код:")
-                        .font(.captionText)
-                        .foregroundColor(.textSecondary)
-                    Text(scannedBarcode)
-                        .font(.bodyText)
-                        .foregroundColor(.textPrimary)
+                        .font(Font.captionText)
+                        .foregroundColor(Color.textSecondary)
+                    Text(barcode)
+                        .font(Font.bodyText)
+                        .foregroundColor(Color.textPrimary)
+                    Spacer()
+                    Button {
+                        viewModel.copyBarcodeTapped()
+                    } label: {
+                        Image(systemName: "square.fill.on.square.fill")
+                            .foregroundColor(Color.textSecondary)
+                    }
+                    
+                }
+            } else {
+                Button {
+                    viewModel.isShowingScanner = true
+                } label: {
+                    HStack {
+                        Image(systemName: "barcode.viewfinder")
+                        Text("Сканировать штрих-код")
+                            .font(Font.bodyText)
+                    }
+                    .foregroundColor(Color.blue)
                 }
             }
         }
@@ -102,8 +111,8 @@ extension EditMedicineView {
     var additionalSection: some View {
         Section(header: Text("Дополнительно").font(.sectionHeader)) {
             TextField("Заметки", text: $viewModel.medicine.notes)
-                .font(.bodyText)
-                .foregroundColor(.textPrimary)
+                .font(Font.bodyText)
+                .foregroundColor(Color.textPrimary)
         }
         .listRowBackground(Color.cardBackground)
     }

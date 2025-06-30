@@ -1,12 +1,12 @@
 //
-//  MedicinesViewModel.swift
+//  MedicineListViewModel.swift
 //  PharmMemory
 //
 //  Created by Karina Blinova on 18.06.2025.
 //
 import SwiftUI
 
-final class MedicinesViewModel: ObservableObject {
+final class MedicineListViewModel: ObservableObject {
     private let databaseService = ServiceLocator.shared.resolve(DatabaseServiceProtocol.self)
     
     private var allMedicines: [Medicine] = []
@@ -34,5 +34,4 @@ final class MedicinesViewModel: ObservableObject {
         allMedicines.removeAll { $0.id == medicine.id }
         filteredMedicines.removeAll { $0.id == medicine.id }
     }
-    
 }

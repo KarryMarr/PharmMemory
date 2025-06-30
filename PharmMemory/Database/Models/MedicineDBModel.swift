@@ -14,6 +14,7 @@ final class MedicineDBModel {
     var dose: String
     var count: String
     var notes: String?
+    var barcode: String?
     var expiryDate: Date
     
     init(
@@ -22,6 +23,7 @@ final class MedicineDBModel {
         dose: String,
         count: String,
         notes: String? = nil,
+        barcode: String?,
         expiryDate: Date
     ) {
         self.id = id
@@ -29,6 +31,7 @@ final class MedicineDBModel {
         self.dose = dose
         self.count = count
         self.notes = notes
+        self.barcode = barcode
         self.expiryDate = expiryDate
     }
 }
@@ -41,6 +44,7 @@ extension MedicineDBModel {
             dose: medicine.dose,
             count: medicine.count,
             notes: medicine.notes,
+            barcode: medicine.barcode,
             expiryDate: medicine.expiryDate)
     }
 }
@@ -53,6 +57,7 @@ extension Medicine {
             dose: dbModel.dose,
             count: dbModel.count,
             notes: dbModel.notes ?? String.empty,
+            barcode: dbModel.barcode,
             expiryDate: dbModel.expiryDate)
     }
 }

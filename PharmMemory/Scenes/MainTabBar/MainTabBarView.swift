@@ -10,7 +10,7 @@ struct MainTabBarView: View {
     
     var body: some View {
         TabView {
-            MedicinesView()
+            MedicineListView()
                 .tabItem {
                     Image(systemName: "cross.case")
                     Text("Моя аптечка")
@@ -27,8 +27,4 @@ struct MainTabBarView: View {
                 }
         }
     }
-}
-
-#Preview {
-    MainTabBarView()
 }
