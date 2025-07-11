@@ -8,6 +8,7 @@ import SwiftUI
 
 struct EditMedicineView: View {
     @Environment(\.dismiss) private var dismiss
+    @FocusState private var isFocused: Bool
     @ObservedObject var viewModel: EditMedicineViewModel
     
     var body: some View {
@@ -17,7 +18,6 @@ struct EditMedicineView: View {
                 barcodeSection
                 additionalSection
             }
-            .background(Color.background)
             .navigationTitle(viewModel.sceneType.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
@@ -32,9 +32,14 @@ struct EditMedicineView: View {
                         Text("Сохранить")
                             .foregroundStyle(viewModel.medicine.isValid ? Color.blue : Color.gray)
                     }
-                    .alert("Заполните обязательные поля", isPresented: $viewModel.isShowAlert) { }
+                    .alert(viewModel.alertTitle, isPresented: $viewModel.isShowAlert) { }
                     .font(Font.bodyBold)
-                    .foregroundColor(Color.primary)
+                }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Готово") {
+                        isFocused = false
+                    }
                 }
             }
             .sheet(isPresented: $viewModel.isShowingScanner) {
@@ -47,20 +52,20 @@ struct EditMedicineView: View {
 private extension EditMedicineView {
     var mainSection: some View {
         Section {
-            TextField("Название лекарства", text: $viewModel.medicine.title)
-                .font(Font.bodyText)
-                .foregroundColor(Color.textPrimary)
-            
-            TextField("Дозировка (мг, мл и т.д.)", text: $viewModel.medicine.dose)
-                .font(Font.bodyText)
-                .foregroundColor(Color.textPrimary)
-                .keyboardType(.numbersAndPunctuation)
-            
-            TextField("Количество в упаковке", text: $viewModel.medicine.count)
-                .font(Font.bodyText)
-                .foregroundColor(Color.textPrimary)
-                .keyboardType(.numberPad)
-            
+            TextFieldCellView(
+                title: "Название",
+                subtitle: $viewModel.medicine.title)
+            .focused($isFocused)
+            TextFieldCellView(
+                title: "Дозировка",
+                subtitle: $viewModel.medicine.dose,
+                keyboardType: .numberPad)
+            .focused($isFocused)
+            TextFieldCellView(
+                title: "Количество",
+                subtitle: $viewModel.medicine.count,
+                keyboardType: .numberPad)
+            .focused($isFocused)
             DatePicker(
                 "Срок годности",
                 selection: $viewModel.medicine.expiryDate,
@@ -70,7 +75,6 @@ private extension EditMedicineView {
             .foregroundColor(Color.textPrimary)
             .environment(\.locale, Locale(identifier: "ru_RU"))
         }
-        .listRowBackground(Color.cardBackground)
     }
     
     var barcodeSection: some View {
@@ -105,7 +109,6 @@ private extension EditMedicineView {
                 }
             }
         }
-        .listRowBackground(Color.cardBackground)
     }
     
     var additionalSection: some View {
@@ -114,7 +117,6 @@ private extension EditMedicineView {
                 .font(Font.bodyText)
                 .foregroundColor(Color.textPrimary)
         }
-        .listRowBackground(Color.cardBackground)
     }
 }
 

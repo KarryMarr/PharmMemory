@@ -16,7 +16,7 @@ struct EditMedicineModel {
             case .add:
                 return "Добавить лекарство"
             case .edit:
-                return "Редактировать лекарство"
+                return "Редактировать"
             }
         }
     }

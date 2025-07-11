@@ -15,6 +15,7 @@ final class CheckListViewModel: ObservableObject {
     private var medicines: [Medicine] = [] {
         didSet {
             lowStockMedicines = medicines.filter { medicine in
+                guard medicine.expiryStatus == .expired else { return true }
                 guard let medicineCount = Int(medicine.count) else { return false }
                 return medicineCount < 5
             }

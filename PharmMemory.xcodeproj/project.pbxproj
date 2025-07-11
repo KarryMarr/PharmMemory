@@ -10,9 +10,22 @@
 		3DC94E372E01C867002FB262 /* PharmMemory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PharmMemory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3D60F0FA2E2048AA00643B20 /* Exceptions for "PharmMemory" folder in "PharmMemory" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 3DC94E362E01C867002FB262 /* PharmMemory */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		3DC94E392E01C867002FB262 /* PharmMemory */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3D60F0FA2E2048AA00643B20 /* Exceptions for "PharmMemory" folder in "PharmMemory" target */,
+			);
 			path = PharmMemory;
 			sourceTree = "<group>";
 		};
@@ -251,6 +264,7 @@
 				DEVELOPMENT_TEAM = 72F3S9V8JP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PharmMemory/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Этому приложению требуется доступ к камере для сканирования штрихкодов для автозаполнения информации о лекарстве";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -290,6 +304,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PharmMemory/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Этому приложению требуется доступ к камере для сканирования штрихкодов для автозаполнения информации о лекарстве";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;

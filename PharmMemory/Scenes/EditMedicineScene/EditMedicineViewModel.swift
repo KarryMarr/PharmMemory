@@ -15,6 +15,7 @@ final class EditMedicineViewModel: ObservableObject {
     @Published var sceneType: EditMedicineModel.SceneType
     @Published var isShowingScanner = false
     @Published var isShowAlert: Bool = false
+    @Published var alertTitle: String = String.empty
     
     init(
         sceneType: EditMedicineModel.SceneType,
@@ -32,6 +33,7 @@ final class EditMedicineViewModel: ObservableObject {
     
     func saveButtonTapped() {
         guard medicine.isValid else {
+            alertTitle = "Заполните обязательные поля"
             isShowAlert = true
             return
         }
@@ -43,5 +45,7 @@ final class EditMedicineViewModel: ObservableObject {
     
     func copyBarcodeTapped() {
         UIPasteboard.general.string = medicine.barcode
+        alertTitle = "Артикул скопирован"
+        isShowAlert = true
     }
 }

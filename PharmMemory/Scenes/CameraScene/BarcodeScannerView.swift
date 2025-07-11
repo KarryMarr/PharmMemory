@@ -45,15 +45,20 @@ struct BarcodeScannerView: View {
     
     private var scannerHeader: some View {
         HStack {
-            Spacer()
-            
             Text("Наведите камеру на штрих-код")
                 .foregroundColor(Color.white)
                 .padding()
                 .background(Color.black.opacity(Double.scannerHeaderBackgroundOpacity))
                 .cornerRadius(CGFloat.scannerHeaderCornerRadius)
-            
-            Spacer()
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .foregroundColor(Color.white)
+                    .padding()
+                    .background(Color.black.opacity(Double.scannerHeaderBackgroundOpacity))
+                    .clipShape(Circle())
+            }
         }
         .padding(.top, CGFloat.scannerHeaderTopPadding)
     }

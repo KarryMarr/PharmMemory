@@ -49,7 +49,6 @@ final class DatabaseService: DatabaseServiceProtocol {
                 model: MedicineDBModel.self,
                 where: predicate
             )
-            print("Успешно удалено") //TODO: показать ошибку в тоасте и не закрывать экран
         } catch {
             print("Ошибка удаления: \(error)") //TODO: показать ошибку в тоасте и не закрывать экран
         }
