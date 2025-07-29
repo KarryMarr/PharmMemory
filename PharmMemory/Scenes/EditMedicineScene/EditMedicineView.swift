@@ -75,7 +75,7 @@ private extension EditMedicineView {
                 subtitle: $viewModel.medicine.dose,
                 isMandatory: true,
                 shouldShowPicker: true,
-                selectedUnit: viewModel.medicine.dosageUnit,
+                selectedUnit: viewModel.medicine.dosageUnits,
                 keyboardType: .numberPad)
             .focused($isFocused)
             TextFieldCellView(

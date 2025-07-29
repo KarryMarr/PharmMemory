@@ -11,11 +11,11 @@ private extension Int {
     static let daysInMonth: Int = 30
 }
 
-struct Medicine: Identifiable {
+struct Medicine: Codable, Identifiable {
     let id: UUID
     var title: String
     var dose: String
-    var dosageUnit: DosageUnit
+    var dosageUnits: DosageUnits
     var count: String
     var notes: String
     var barcode: String?

@@ -12,7 +12,7 @@ final class MedicineDBModel {
     @Attribute(.unique) var id: UUID
     var title: String
     var dose: String
-    var dosageUnit: String
+    var dosageUnits: String
     var count: String?
     var notes: String?
     var barcode: String?
@@ -23,7 +23,7 @@ final class MedicineDBModel {
         id: UUID,
         title: String,
         dose: String,
-        dosageUnit: DosageUnit,
+        dosageUnits: DosageUnits,
         count: String?,
         notes: String? = nil,
         barcode: String?,
@@ -33,7 +33,7 @@ final class MedicineDBModel {
         self.id = id
         self.title = title
         self.dose = dose
-        self.dosageUnit = dosageUnit.rawValue
+        self.dosageUnits = dosageUnits.rawValue
         self.count = count
         self.notes = notes
         self.barcode = barcode
@@ -48,7 +48,7 @@ extension MedicineDBModel {
             id: medicine.id,
             title: medicine.title,
             dose: medicine.dose,
-            dosageUnit: medicine.dosageUnit,
+            dosageUnits: medicine.dosageUnits,
             count: medicine.count,
             notes: medicine.notes,
             barcode: medicine.barcode,
@@ -63,7 +63,7 @@ extension Medicine {
             id: dbModel.id,
             title: dbModel.title,
             dose: dbModel.dose,
-            dosageUnit: DosageUnit(rawValue: dbModel.dosageUnit) ?? .milligrams,
+            dosageUnits: DosageUnits(rawValue: dbModel.dosageUnits) ?? .milligrams,
             count: dbModel.count ?? "",
             notes: dbModel.notes ?? String.empty,
             barcode: dbModel.barcode,

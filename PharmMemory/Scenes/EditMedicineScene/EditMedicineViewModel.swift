@@ -10,6 +10,7 @@ import SwiftData
 final class EditMedicineViewModel: ObservableObject {
     private let databaseService = ServiceLocator.shared.resolve(DatabaseServiceProtocol.self)
     private let notificationCenterService = ServiceLocator.shared.resolve(NotificationCenterServiceProtocol.self)
+    private let autocompleteService = ServiceLocator.shared.resolve(AutocompleteServiceProtocol.self)
     
     @Published var medicine: Medicine
     @Published var sceneType: EditMedicineModel.SceneType
@@ -26,7 +27,7 @@ final class EditMedicineViewModel: ObservableObject {
             id: UUID(),
             title: String.empty,
             dose: String.empty,
-            dosageUnit: .milligrams,
+            dosageUnits: .milligrams,
             count: String.empty,
             notes: String.empty,
             expiryDate: Date(),
@@ -42,6 +43,11 @@ final class EditMedicineViewModel: ObservableObject {
         databaseService?.saveMedicine(medicine)
         if UserDefaults.standard.bool(forKey: UserDefaultsKeys.notificationsEnabled.rawValue) {
             notificationCenterService?.scheduleExpiryNotifications(for: medicine)
+        }
+        if medicine.barcode?.isEmpty == false {
+            Task {
+                await autocompleteService?.saveNewMedicine(medicine)
+            }
         }
     }
     

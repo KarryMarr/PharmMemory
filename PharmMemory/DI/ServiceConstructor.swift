@@ -11,6 +11,7 @@ final class ServiceConstructor {
     
     func loadAllServices() {
         container.register(NotificationCenterService(), for: NotificationCenterServiceProtocol.self)
+        container.register(AutocompleteService(), for: AutocompleteServiceProtocol.self)
     }
     
     func loadDatabaseService(with modelContext: ModelContext) {

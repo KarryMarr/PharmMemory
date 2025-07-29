@@ -31,7 +31,7 @@ struct MedicineCardView: View {
                 }
             }
             
-            Text("\(medicine.dose) \(medicine.dosageUnit.title)")
+            Text("\(medicine.dose) \(medicine.dosageUnits.title)")
                 .font(Font.bodyText)
                 .foregroundColor(Color.textSecondary)
             

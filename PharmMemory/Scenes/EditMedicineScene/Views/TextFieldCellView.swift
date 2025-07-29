@@ -15,7 +15,7 @@ struct TextFieldCellView: View {
     @Binding var subtitle: String
     var isMandatory: Bool
     var shouldShowPicker: Bool = false
-    @State var selectedUnit: DosageUnit = .milligrams
+    @State var selectedUnit: DosageUnits = .milligrams
     var keyboardType: UIKeyboardType = .default
     @State private var isEditing = false
     @FocusState private var isFocused: Bool
@@ -56,7 +56,7 @@ struct TextFieldCellView: View {
             }
             if shouldShowPicker {
                 Picker("", selection: $selectedUnit) {
-                    ForEach(DosageUnit.allCases, id: \.self) { unit in
+                    ForEach(DosageUnits.allCases, id: \.self) { unit in
                         Text(unit.title).tag(unit)
                     }
                 }
