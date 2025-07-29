@@ -76,6 +76,7 @@ PharmMemory создан для **обычных людей**, которые х
 ### 2. Добавление/редактирование лекарства
 <img width="406" height="1822" alt="Simulator Screenshot - iPhone 16 Pro - 2025-07-28 at 20 26 22" src="https://github.com/user-attachments/assets/15b0d429-874f-479c-919b-992c91943902" /><img width="406" height="1822" alt="Simulator Screenshot - iPhone 16 Pro - 2025-07-28 at 20 29 04" src="https://github.com/user-attachments/assets/d7445a68-3f96-4e51-bfa1-a11674c557fe" /><img width="406" height="1822" alt="Simulator Screenshot - iPhone 16 Pro - 2025-07-28 at 20 32 15" src="https://github.com/user-attachments/assets/149f79ef-b1a7-4d49-b5ac-449a82c32867" /><img width="406" height="1822" alt="Simulator Screenshot - iPhone 16 Pro - 2025-07-28 at 20 33 16" src="https://github.com/user-attachments/assets/4102db9f-764e-4619-b51a-794be9530d1a" />
 
+
 - Поля для ввода:
   - Название
   - Дозировка (с выбором единиц измерения)
@@ -86,7 +87,7 @@ PharmMemory создан для **обычных людей**, которые х
 - **Кнопка сканирования штрих-кода** → открывает камеру
 
 ### 3. Сканирование штрих-кода
-<img width="406" height="1822" alt="Simulator Screenshot - iPhone 16 Pro - 2025-07-28 at 20 26 22" src="https://github.com/user-attachments/assets/d149bdc9-fcd6-48ea-aec9-309a67aa7aec" /><img width="406" height="1822" alt="Simulator Screenshot - iPhone 16 Pro - 2025-07-28 at 20 26 22" src="https://github.com/user-attachments/assets/8df7792d-1f1d-46e0-aac4-16e1857faf2d" />
+<img width="406" height="1822" alt="Simulator Screenshot - iPhone 16 Pro - 2025-07-28 at 20 26 22" src="https://github.com/user-attachments/assets/d149bdc9-fcd6-48ea-aec9-309a67aa7aec" /><img width="406" height="1822" alt="Simulator Screenshot - iPhone 16 Pro - 2025-07-28 at 20 26 22" src="https://github.com/user-attachments/assets/8df7792d-1f1d-46e0-aac4-16e1857faf2d" /><img width="406" height="1822" alt="Simulator Screenshot - iPhone 16 Pro - 2025-07-28 at 20 26 22" src="https://github.com/user-attachments/assets/02bbe3f2-e1f9-4628-97a2-3c8fdcb28c1d" />
 
 - Интерфейс камеры с областью сканирования
 - Автоматическое распознавание и возврат данных
