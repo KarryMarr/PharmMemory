@@ -6,6 +6,10 @@
 //
 import SwiftUI
 
+private extension CGFloat {
+    static let mandatoryIconWidthAndHeight: CGFloat = 4
+}
+
 struct EditMedicineView: View {
     @Environment(\.dismiss) private var dismiss
     @FocusState private var isFocused: Bool
@@ -15,13 +19,22 @@ struct EditMedicineView: View {
         NavigationStack {
             Form {
                 mainSection
-                barcodeSection
                 additionalSection
+                barcodeSection
             }
             .navigationTitle(viewModel.sceneType.title)
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
             .toolbar(.hidden, for: .tabBar)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: { dismiss() }) {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                            Text("Назад")
+                        }
+                    }
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
                         viewModel.saveButtonTapped()
@@ -54,26 +67,38 @@ private extension EditMedicineView {
         Section {
             TextFieldCellView(
                 title: "Название",
-                subtitle: $viewModel.medicine.title)
+                subtitle: $viewModel.medicine.title,
+                isMandatory: true)
             .focused($isFocused)
             TextFieldCellView(
                 title: "Дозировка",
                 subtitle: $viewModel.medicine.dose,
+                isMandatory: true,
+                shouldShowPicker: true,
+                selectedUnit: viewModel.medicine.dosageUnit,
                 keyboardType: .numberPad)
             .focused($isFocused)
             TextFieldCellView(
                 title: "Количество",
                 subtitle: $viewModel.medicine.count,
+                isMandatory: false,
                 keyboardType: .numberPad)
             .focused($isFocused)
-            DatePicker(
-                "Срок годности",
-                selection: $viewModel.medicine.expiryDate,
-                displayedComponents: .date
-            )
-            .font(Font.bodyText)
-            .foregroundColor(Color.textPrimary)
+            DatePicker(selection: $viewModel.medicine.expiryDate, displayedComponents: .date) {
+                HStack {
+                    Text("Срок годности")
+                        .font(Font.bodyText)
+                        .foregroundColor(Color.textPrimary)
+                    Image(systemName: "circle.fill")
+                        .resizable()
+                        .frame(width: CGFloat.mandatoryIconWidthAndHeight, height: CGFloat.mandatoryIconWidthAndHeight)
+                        .foregroundStyle(Color.red)
+                }
+            }
             .environment(\.locale, Locale(identifier: "ru_RU"))
+        } footer: {
+            Text(viewModel.medicine.statusTitle)
+                .foregroundStyle(viewModel.medicine.expiryStatus.statusColor)
         }
     }
     
@@ -113,6 +138,8 @@ private extension EditMedicineView {
     
     var additionalSection: some View {
         Section(header: Text("Дополнительно").font(.sectionHeader)) {
+            Toggle("Добавить в список покупок", isOn: $viewModel.medicine.isOnShoppingList)
+                .font(.bodyText)
             TextField("Заметки", text: $viewModel.medicine.notes)
                 .font(Font.bodyText)
                 .foregroundColor(Color.textPrimary)

@@ -26,9 +26,11 @@ final class EditMedicineViewModel: ObservableObject {
             id: UUID(),
             title: String.empty,
             dose: String.empty,
+            dosageUnit: .milligrams,
             count: String.empty,
             notes: String.empty,
-            expiryDate: Date())
+            expiryDate: Date(),
+            isOnShoppingList: false)
     }
     
     func saveButtonTapped() {

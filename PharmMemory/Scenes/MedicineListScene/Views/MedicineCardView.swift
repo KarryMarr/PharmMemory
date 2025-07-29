@@ -8,8 +8,7 @@ import SwiftUI
 
 private extension CGFloat {
     static let stackSpacing: CGFloat = 8
-    static let circleWidthHeight: CGFloat = 12
-    static let padding: CGFloat = 12
+    static let warningIconHeight: CGFloat = 20
     static let cornerRadius: CGFloat = 10
 }
 
@@ -22,30 +21,31 @@ struct MedicineCardView: View {
                 Text(medicine.title)
                     .font(Font.bodyBold)
                     .foregroundColor(Color.textPrimary)
-                
                 Spacer()
-                
-                Circle()
-                    .fill(medicine.expiryStatus.statusColor)
-                    .frame(width: CGFloat.circleWidthHeight, height: CGFloat.circleWidthHeight)
+                if medicine.expiryStatus != .valid {
+                    Image(systemName: "clock.badge.exclamationmark")
+                        .resizable()
+                        .frame(height: CGFloat.warningIconHeight)
+                        .scaledToFit()
+                        .foregroundStyle(medicine.expiryStatus.statusColor)
+                }
             }
             
-            Text(medicine.dose)
+            Text("\(medicine.dose) \(medicine.dosageUnit.title)")
                 .font(Font.bodyText)
                 .foregroundColor(Color.textSecondary)
             
             HStack {
-                Text("\(medicine.count) шт.")
-                    .font(Font.captionText)
-                
+                if !medicine.count.isEmpty {
+                    Text("\(medicine.count) шт.")
+                        .font(Font.captionText)
+                }
                 Spacer()
-                
                 Text("Годен до \(medicine.expiryDate.formatted(date: .numeric, time: .omitted))")
                     .font(.captionText)
             }
             .foregroundColor(Color.textSecondary)
         }
-        .padding(CGFloat.padding)
         .cornerRadius(CGFloat.cornerRadius)
     }
 }

@@ -22,6 +22,9 @@ struct CheckListView: View {
                 contentStateView
             }
         }
+        .onAppear {
+            viewModel.onAppear()
+        }
     }
 }
 
@@ -42,7 +45,7 @@ private extension CheckListView {
     }
     
     var contentStateView: some View {
-        List(viewModel.lowStockMedicines) { medicine in
+        List(viewModel.medicines) { medicine in
             MedicineCardView(medicine: medicine)
                 .listRowBackground(Color.cardBackground)
                 .listRowSeparatorTint(Color.secondarySeparator)

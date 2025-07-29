@@ -9,21 +9,12 @@ import SwiftUI
 final class CheckListViewModel: ObservableObject {
     private let databaseService = ServiceLocator.shared.resolve(DatabaseServiceProtocol.self)
     
-    @Published var lowStockMedicines: [Medicine] = []
-    
-    var model = CheckListModel(state: .empty)
-    private var medicines: [Medicine] = [] {
-        didSet {
-            lowStockMedicines = medicines.filter { medicine in
-                guard medicine.expiryStatus == .expired else { return true }
-                guard let medicineCount = Int(medicine.count) else { return false }
-                return medicineCount < 5
-            }
-        }
-    }
+    @Published var medicines: [Medicine] = []
+    @Published var model = CheckListModel(state: .empty)
     
     func onAppear() {
-        medicines = databaseService?.fetchAllMedicines() ?? []
-        model.state = lowStockMedicines.isEmpty ? .empty : .content
+        let medicines = databaseService?.fetchAllMedicines() ?? []
+        self.medicines = medicines.filter { $0.isOnShoppingList }
+        model.state = medicines.isEmpty ? .empty : .content
     }
 }

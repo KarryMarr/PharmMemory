@@ -12,27 +12,33 @@ final class MedicineDBModel {
     @Attribute(.unique) var id: UUID
     var title: String
     var dose: String
-    var count: String
+    var dosageUnit: String
+    var count: String?
     var notes: String?
     var barcode: String?
     var expiryDate: Date
+    var isOnShoppingList: Bool
     
     init(
         id: UUID,
         title: String,
         dose: String,
-        count: String,
+        dosageUnit: DosageUnit,
+        count: String?,
         notes: String? = nil,
         barcode: String?,
-        expiryDate: Date
+        expiryDate: Date,
+        isOnShoppingList: Bool
     ) {
         self.id = id
         self.title = title
         self.dose = dose
+        self.dosageUnit = dosageUnit.rawValue
         self.count = count
         self.notes = notes
         self.barcode = barcode
         self.expiryDate = expiryDate
+        self.isOnShoppingList = isOnShoppingList
     }
 }
 
@@ -42,10 +48,12 @@ extension MedicineDBModel {
             id: medicine.id,
             title: medicine.title,
             dose: medicine.dose,
+            dosageUnit: medicine.dosageUnit,
             count: medicine.count,
             notes: medicine.notes,
             barcode: medicine.barcode,
-            expiryDate: medicine.expiryDate)
+            expiryDate: medicine.expiryDate,
+            isOnShoppingList: medicine.isOnShoppingList)
     }
 }
 
@@ -55,9 +63,11 @@ extension Medicine {
             id: dbModel.id,
             title: dbModel.title,
             dose: dbModel.dose,
-            count: dbModel.count,
+            dosageUnit: DosageUnit(rawValue: dbModel.dosageUnit) ?? .milligrams,
+            count: dbModel.count ?? "",
             notes: dbModel.notes ?? String.empty,
             barcode: dbModel.barcode,
-            expiryDate: dbModel.expiryDate)
+            expiryDate: dbModel.expiryDate,
+            isOnShoppingList: dbModel.isOnShoppingList)
     }
 }
