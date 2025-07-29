@@ -46,6 +46,16 @@ struct EditMedicineView: View {
                             .foregroundStyle(viewModel.medicine.isValid ? Color.blue : Color.gray)
                     }
                     .alert(viewModel.alertTitle, isPresented: $viewModel.isShowAlert) { }
+                    .confirmationDialog(viewModel.alertTitle, isPresented: $viewModel.isShowConfirmationDialog) {
+                        ForEach(viewModel.medicineOptions, id: \.self) { option in
+                            Button("\(option.name) \(option.dosage) \(option.dosageUnits)") {
+                                viewModel.medicineOptionTapped(option)
+                            }
+                        }
+                        Button("Ввести вручную", role: .cancel) {
+                            viewModel.isShowConfirmationDialog.toggle()
+                        }
+                    }
                     .font(Font.bodyBold)
                 }
                 ToolbarItemGroup(placement: .keyboard) {
@@ -56,7 +66,9 @@ struct EditMedicineView: View {
                 }
             }
             .sheet(isPresented: $viewModel.isShowingScanner) {
-                BarcodeScannerView(scannedCode: $viewModel.medicine.barcode)
+                BarcodeScannerView(
+                    scannedCode: $viewModel.medicine.barcode,
+                    action: viewModel.showMedicineOptions)
             }
         }
     }
@@ -102,24 +114,36 @@ private extension EditMedicineView {
         }
     }
     
+    var additionalSection: some View {
+        Section(header: Text("Дополнительно").font(.sectionHeader)) {
+            Toggle("Добавить в список покупок", isOn: $viewModel.medicine.isOnShoppingList)
+                .font(.bodyText)
+            TextField("Заметки", text: $viewModel.medicine.notes)
+                .font(Font.bodyText)
+                .foregroundColor(Color.textPrimary)
+        }
+    }
+    
     var barcodeSection: some View {
         Section {
             if let barcode = viewModel.medicine.barcode {
-                HStack {
-                    Text("Штрих-код:")
-                        .font(Font.captionText)
-                        .foregroundColor(Color.textSecondary)
-                    Text(barcode)
-                        .font(Font.bodyText)
-                        .foregroundColor(Color.textPrimary)
-                    Spacer()
-                    Button {
-                        viewModel.copyBarcodeTapped()
-                    } label: {
-                        Image(systemName: "square.fill.on.square.fill")
+                VStack {
+                    HStack {
+                        Text("Штрих-код:")
+                            .font(Font.captionText)
                             .foregroundColor(Color.textSecondary)
+                        Text(barcode)
+                            .font(Font.bodyText)
+                            .foregroundColor(Color.textPrimary)
+                        Spacer()
+                        Button {
+                            viewModel.copyBarcodeTapped()
+                        } label: {
+                            Image(systemName: "square.fill.on.square.fill")
+                                .foregroundColor(Color.textSecondary)
+                        }
+                        
                     }
-                    
                 }
             } else {
                 Button {
@@ -135,15 +159,4 @@ private extension EditMedicineView {
             }
         }
     }
-    
-    var additionalSection: some View {
-        Section(header: Text("Дополнительно").font(.sectionHeader)) {
-            Toggle("Добавить в список покупок", isOn: $viewModel.medicine.isOnShoppingList)
-                .font(.bodyText)
-            TextField("Заметки", text: $viewModel.medicine.notes)
-                .font(Font.bodyText)
-                .foregroundColor(Color.textPrimary)
-        }
-    }
 }
-

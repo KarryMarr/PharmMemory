@@ -17,6 +17,7 @@ private extension CGFloat {
 
 struct BarcodeScannerView: View {
     @Binding var scannedCode: String?
+    var action: () -> Void
     @StateObject var viewModel = BarcodeScannerViewModel()
     @Environment(\.dismiss) var dismiss
     
@@ -37,6 +38,7 @@ struct BarcodeScannerView: View {
         }
         .onChange(of: viewModel.scannedCode) {
             scannedCode = viewModel.scannedCode ?? String.empty
+            action()
             if scannedCode?.isEmpty == false {
                 dismiss()
             }

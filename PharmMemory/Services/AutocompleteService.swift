@@ -13,7 +13,7 @@ private enum AutocompleteServicePaths: String {
 
 protocol AutocompleteServiceProtocol {
     func saveNewMedicine(_ medicine: Medicine) async
-    func getMedicines(by article: String) async throws -> [Medicine]
+    func getMedicines(by article: String) async -> [MedicineOption]
 }
 
 final class AutocompleteService: AutocompleteServiceProtocol {
@@ -37,10 +37,15 @@ final class AutocompleteService: AutocompleteServiceProtocol {
         }
     }
     
-    func getMedicines(by article: String) async throws -> [Medicine] {
-        let urlString = "\(baseUrl)\(AutocompleteServicePaths.getMedicinesByArticle.rawValue)?article=\(article)"
-        guard let url = URL(string: urlString) else { return [] }
-        let data = try await URLSession.shared.data(from: url)
-        return try JSONDecoder().decode([Medicine].self, from: data.0)
+    func getMedicines(by article: String) async -> [MedicineOption] {
+        do {
+            let urlString = "\(baseUrl)\(AutocompleteServicePaths.getMedicinesByArticle.rawValue)?article=\(article)"
+            guard let url = URL(string: urlString) else { return [] }
+            let data = try await URLSession.shared.data(from: url)
+            return try JSONDecoder().decode([MedicineOption].self, from: data.0)
+        } catch {
+            print(error.localizedDescription)
+            return []
+        }
     }
 }

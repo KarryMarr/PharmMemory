@@ -16,7 +16,9 @@ final class EditMedicineViewModel: ObservableObject {
     @Published var sceneType: EditMedicineModel.SceneType
     @Published var isShowingScanner = false
     @Published var isShowAlert: Bool = false
+    @Published var isShowConfirmationDialog: Bool = false
     @Published var alertTitle: String = String.empty
+    @Published var medicineOptions: [MedicineOption] = []
     
     init(
         sceneType: EditMedicineModel.SceneType,
@@ -55,5 +57,21 @@ final class EditMedicineViewModel: ObservableObject {
         UIPasteboard.general.string = medicine.barcode
         alertTitle = "Артикул скопирован"
         isShowAlert = true
+    }
+    
+    func medicineOptionTapped(_ option: MedicineOption) {
+        medicine.title = option.name
+        medicine.dose = option.dosage
+        medicine.dosageUnits = DosageUnits(rawValue: option.dosageUnits) ?? .milligrams
+        medicineOptions = []
+    }
+    
+    func showMedicineOptions() {
+        guard let barcode = medicine.barcode else { return }
+        Task { @MainActor [weak self] in
+            self?.medicineOptions = await self?.autocompleteService?.getMedicines(by: barcode) ?? []
+            self?.alertTitle = "Выбери вариант для автозаполнения"
+            self?.isShowConfirmationDialog.toggle()
+        }
     }
 }

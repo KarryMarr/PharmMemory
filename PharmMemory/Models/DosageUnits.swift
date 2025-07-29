@@ -5,7 +5,7 @@
 //  Created by Karina Blinova on 15.07.2025.
 //
 
-enum DosageUnits: String, Codable, CaseIterable {
+enum DosageUnits: String, CaseIterable {
     case milligrams = "мг"
     case percent = "%"
     case grams = "г"
